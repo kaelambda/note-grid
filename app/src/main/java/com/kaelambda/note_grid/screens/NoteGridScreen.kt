@@ -1,11 +1,10 @@
 package com.kaelambda.note_grid.screens
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.InfiniteRepeatableSpec
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.SnapSpec
-import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +21,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,19 +31,18 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kaelambda.note_grid.soundPool
-import com.kaelambda.note_grid.soundPoolIds
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlin.random.Random
 
 const val xCount = 16
 const val yCount = 8
-const val duration = 100f / 16f
+const val duration = 100f / xCount.toFloat()
 
 @Composable
-fun NoteGridScreen() {
+fun NoteGridScreen(viewModel: NoteGridViewModel) {
     var playing by remember { mutableStateOf(false) }
-    var buttonText by remember { mutableStateOf("Playing") }
-    var randomizationDensity by remember { mutableStateOf(25) }
+    var buttonText by remember { mutableStateOf("Play") }
+    var randomizationDensity by remember { mutableIntStateOf(25) }
 
     var noteMatrix by remember {
         mutableStateOf(
@@ -56,12 +55,14 @@ fun NoteGridScreen() {
     val t = remember { Animatable(0f) }
     LaunchedEffect(playing) {
         if (playing) {
-            val tweenSpec = TweenSpec<Float>(1500, easing = LinearEasing)
-            val repeatable = InfiniteRepeatableSpec(tweenSpec, RepeatMode.Restart)
-            t.animateTo(100f, repeatable)
+            t.animateTo(
+                100f,
+                animationSpec = infiniteRepeatable(
+                    tween(2500, easing = LinearEasing)
+                )
+            )
         } else {
-            val snapSpec = SnapSpec<Float>()
-            t.animateTo(0f, snapSpec)
+            t.animateTo(0f, snap())
         }
     }
 
@@ -76,10 +77,10 @@ fun NoteGridScreen() {
                         val isEnabled = noteMatrix[x][y]
                         val isPlaying = isEnabled.and(t.value > startTime && t.value < endTime)
 
-                        Note(y, isPlaying, isEnabled) {
-                            val newMatrix = noteMatrix.clone()
-                            newMatrix[x][y] = it
-                            noteMatrix = newMatrix
+                        Note(y, isPlaying, isEnabled, viewModel::playSound) {
+                            noteMatrix = noteMatrix.clone().apply {
+                                this[x][y] = it
+                            }
                         }
                     }
                 }
@@ -120,22 +121,22 @@ fun NoteGridScreen() {
 }
 
 @Composable
-fun Note(noteId: Int, isPlaying: Boolean, isEnabled: Boolean, onValueChange: (Boolean) -> Unit) {
+fun Note(
+    noteId: Int,
+    isPlaying: Boolean,
+    isEnabled: Boolean,
+    playSound: (Int) -> Unit,
+    onValueChange: (Boolean) -> Unit
+) {
     val color = when {
-        isPlaying -> {
-            Color.Green
-        }
-        isEnabled -> {
-            Color.Red
-        }
-        else -> {
-            Color.Gray
-        }
+        isPlaying -> { Color.Green }
+        isEnabled -> { Color.Red }
+        else -> { Color.Gray }
     }
 
     if (isPlaying) {
-        soundPool.play(soundPoolIds[7 - noteId], 1f, 1f, 1, 0, 1f)
-    } // else stop the sound
+        playSound(noteId)
+    }
 
     Surface(
         Modifier
@@ -153,5 +154,5 @@ fun Note(noteId: Int, isPlaying: Boolean, isEnabled: Boolean, onValueChange: (Bo
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
-    NoteGridScreen()
+    NoteGridScreen(viewModel())
 }
