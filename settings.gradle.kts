@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "NoteGrid"
 include(":app")
- 
+include(":sherlockmidi")
