@@ -116,6 +116,11 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                 onValueChange = { randomizationDensity = it.toIntOrNull() ?: 0 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
+
+            Spacer(Modifier.height(16.dp))
+            Button(onClick = viewModel::generateMidiFile) {
+                Text("Generate and play MIDI file")
+            }
         }
     }
 }
