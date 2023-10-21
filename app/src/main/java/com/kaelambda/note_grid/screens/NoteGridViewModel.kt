@@ -3,6 +3,8 @@ package com.kaelambda.note_grid.screens
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
+import cn.sherlock.com.sun.media.sound.SF2Soundbank
+import cn.sherlock.com.sun.media.sound.SoftSynthesizer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,12 +28,37 @@ class NoteGridViewModel @Inject constructor() : ViewModel() {
     @Inject lateinit var outputFile: File
 
     @Inject lateinit var mediaPlayer: MediaPlayer
+    @Inject lateinit var synth: SoftSynthesizer
 
     private val resolution = 960
     private val midiFileWriter = StandardMidiFileWriter()
 
+    private val useMidi = true
+
     fun playSound(scaleDegree: Int) {
-        soundController.play(scaleDegree)
+        if (useMidi) {
+            playSoundWithMidi(scaleDegree)
+        } else {
+            soundController.play(scaleDegree)
+        }
+    }
+
+    fun stopSound(scaleDegree: Int) {
+        if (useMidi) {
+            stopMidiSound(scaleDegree)
+        }
+    }
+
+    private fun playSoundWithMidi(scaleDegree: Int) {
+        val msg = ShortMessage()
+        msg.setMessage(ShortMessage.NOTE_ON, 0, 60 - scaleDegree, 127)
+        synth.receiver.send(msg, -1)
+    }
+
+    private fun stopMidiSound(scaleDegree: Int) {
+        val msg = ShortMessage()
+        msg.setMessage(ShortMessage.NOTE_OFF, 0, 60 - scaleDegree, 127)
+        synth.receiver.send(msg, -1)
     }
 
     fun generateMidiFile() {
@@ -73,5 +100,19 @@ object NoteGridViewModelModule {
     @Provides
     fun provideMediaPlayer(): MediaPlayer {
         return MediaPlayer()
+    }
+
+    @Provides
+    fun providesSynth(@ApplicationContext appContext: Context): SoftSynthesizer {
+//        val sf = SF2Soundbank(appContext.assets.open("OPL-3_FM_128M.sf2"))
+        val sf = SF2Soundbank(appContext.assets.open("SmallTimGM6mb.sf2"))
+
+        val synth = SoftSynthesizer()
+        synth.open()
+        synth.loadAllInstruments(sf)
+        synth.channels[0].programChange(0)
+        synth.channels[1].programChange(1)
+
+        return synth
     }
 }

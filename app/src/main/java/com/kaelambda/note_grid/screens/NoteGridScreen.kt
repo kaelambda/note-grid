@@ -58,7 +58,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
             t.animateTo(
                 100f,
                 animationSpec = infiniteRepeatable(
-                    tween(2500, easing = LinearEasing)
+                    tween(10000, easing = LinearEasing)
                 )
             )
         } else {
@@ -77,7 +77,13 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                         val isEnabled = noteMatrix[x][y]
                         val isPlaying = isEnabled.and(t.value > startTime && t.value < endTime)
 
-                        Note(y, isPlaying, isEnabled, viewModel::playSound) {
+                        Note(
+                            y,
+                            isPlaying,
+                            isEnabled,
+                            viewModel::playSound,
+                            viewModel::stopSound
+                        ) {
                             noteMatrix = noteMatrix.clone().apply {
                                 this[x][y] = it
                             }
@@ -131,6 +137,7 @@ fun Note(
     isPlaying: Boolean,
     isEnabled: Boolean,
     playSound: (Int) -> Unit,
+    stopSound: (Int) -> Unit,
     onValueChange: (Boolean) -> Unit
 ) {
     val color = when {
@@ -141,6 +148,13 @@ fun Note(
 
     if (isPlaying) {
         playSound(noteId)
+    } else {
+        // This will trigger for notes on the grid that are disabled or not currently playing
+        // but with the same noteId
+        // We need to respond to the event of "isPlaying-has-changed"
+        // Since this is a side effect we should look at the tools available for that
+
+//        stopSound(noteId)
     }
 
     Surface(
