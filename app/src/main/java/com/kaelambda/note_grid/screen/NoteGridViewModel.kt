@@ -5,80 +5,53 @@ import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
 import cn.sherlock.com.sun.media.sound.SF2Soundbank
 import cn.sherlock.com.sun.media.sound.SoftSynthesizer
+import com.kaelambda.note_grid.audio.MidiFileWriter
+import com.kaelambda.note_grid.audio.MidiSoundController
+import com.kaelambda.note_grid.audio.SoundPoolController
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import jp.kshoji.javax.sound.midi.MidiEvent
-import jp.kshoji.javax.sound.midi.Sequence
-import jp.kshoji.javax.sound.midi.ShortMessage
-import jp.kshoji.javax.sound.midi.io.StandardMidiFileWriter
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Qualifier
 
 @HiltViewModel
 class NoteGridViewModel @Inject constructor() : ViewModel() {
-
-    @Inject lateinit var soundController: SoundController
-
-    @NoteGridViewModelModule.OutputFile
-    @Inject lateinit var outputFile: File
-
+    @Inject lateinit var soundPoolController: SoundPoolController
+    @Inject lateinit var midiController: MidiSoundController
+    @Inject lateinit var midiFileWriter: MidiFileWriter
     @Inject lateinit var mediaPlayer: MediaPlayer
-    @Inject lateinit var synth: SoftSynthesizer
-
-    private val resolution = 960
-    private val midiFileWriter = StandardMidiFileWriter()
 
     private val useMidi = true
 
     fun playSound(scaleDegree: Int) {
         if (useMidi) {
-            playSoundWithMidi(scaleDegree)
+            midiController.play(scaleDegree)
         } else {
-            soundController.play(scaleDegree)
+            soundPoolController.play(scaleDegree)
         }
     }
 
     fun stopSound(scaleDegree: Int) {
         if (useMidi) {
-            stopMidiSound(scaleDegree)
+            midiController.stop(scaleDegree)
         }
-    }
-
-    private fun playSoundWithMidi(scaleDegree: Int) {
-        val msg = ShortMessage()
-        msg.setMessage(ShortMessage.NOTE_ON, 0, 60 - scaleDegree, 127)
-        synth.receiver.send(msg, -1)
-    }
-
-    private fun stopMidiSound(scaleDegree: Int) {
-        val msg = ShortMessage()
-        msg.setMessage(ShortMessage.NOTE_OFF, 0, 60 - scaleDegree, 127)
-        synth.receiver.send(msg, -1)
     }
 
     fun generateMidiFile() {
-        val sequence = Sequence(Sequence.PPQ, resolution)
-        val track = sequence.createTrack()
-
-        for (i in 0L..20L) {
-            track.add(MidiEvent(ShortMessage(), resolution * i))
-        }
-
-        midiFileWriter.write(sequence, 0, outputFile)
-
-        mediaPlayer.setDataSource(outputFile.toString())
+        mediaPlayer.setDataSource(
+            midiFileWriter.generateMidiFile().toString()
+        )
         mediaPlayer.prepare()
         mediaPlayer.start()
     }
 
     override fun onCleared() {
         super.onCleared()
-        soundController.release()
+        soundPoolController.release()
     }
 }
 

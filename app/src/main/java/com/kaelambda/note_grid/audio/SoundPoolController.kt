@@ -1,4 +1,4 @@
-package com.kaelambda.note_grid.screen
+package com.kaelambda.note_grid.audio
 
 import android.content.Context
 import android.media.AudioAttributes
@@ -7,7 +7,7 @@ import com.kaelambda.note_grid.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class SoundController @Inject constructor(@ApplicationContext context: Context) {
+class SoundPoolController @Inject constructor(@ApplicationContext context: Context) {
     private val staccatoSynthIds = listOf(
         R.raw.staccatosynth1,
         R.raw.staccatosynth2,
@@ -36,7 +36,7 @@ class SoundController @Inject constructor(@ApplicationContext context: Context) 
     }
 
     fun play(scaleDegree: Int): Int {
-        return soundPool.play(soundPoolIds[7 - scaleDegree], 1f, 1f, 1, 0, 1f)
+        return soundPool.play(soundPoolIds[scaleDegree], 1f, 1f, 1, 0, 1f)
     }
 
     fun release() {
