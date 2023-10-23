@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -58,7 +59,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
             t.animateTo(
                 100f,
                 animationSpec = infiniteRepeatable(
-                    tween(10000, easing = LinearEasing)
+                    tween(2500, easing = LinearEasing)
                 )
             )
         } else {
@@ -66,13 +67,13 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
         }
     }
 
-    Surface {
+    Surface(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp)) {
             for (y in 0 until yCount) {
                 Row {
                     for (x in 0 until xCount) {
-                        val startTime = duration * x
-                        val endTime = startTime + duration
+                        val startTime = remember { duration * x }
+                        val endTime = remember { startTime + duration }
 
                         val isEnabled = noteMatrix[x][y]
                         val isPlaying = isEnabled.and(t.value > startTime && t.value < endTime)
@@ -150,11 +151,19 @@ fun Note(
         playSound(noteId)
     } else {
         // This will trigger for notes on the grid that are disabled or not currently playing
-        // but with the same noteId
-        // We need to respond to the event of "isPlaying-has-changed"
-        // Since this is a side effect we should look at the tools available for that
+        // but with the same noteId if notes are being recomposed when they shouldn't be
 
-//        stopSound(noteId)
+        // Yes -- seems every note is being recomposed when e.g. I enable a single note.
+        // Could this be because isPlaying and isEnabled are vals that are recalculated every
+        // time the screen is recomposed?
+
+        // Perhaps we should hoist the state into a StateHolder for each Note?
+        // Or use remember / mutableStateOf / derivedStateOf in the proper way?
+
+        // When NoteMatrix changes, could that have knockon effects?
+        // A breakpoint here is also hit for every note as t changes while playing
+
+        stopSound(noteId)
     }
 
     Surface(
