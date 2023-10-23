@@ -1,4 +1,4 @@
-package com.kaelambda.note_grid.screens
+package com.kaelambda.note_grid.screen
 
 import android.content.Context
 import android.media.MediaPlayer
