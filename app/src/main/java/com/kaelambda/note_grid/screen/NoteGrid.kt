@@ -26,7 +26,7 @@ fun NoteGrid(
                     val isPlaying = isEnabled.and(t.value > startTime && t.value < endTime)
 
                     Note(
-                        y,
+                        7 - y,
                         isPlaying,
                         isEnabled,
                         playSound,
