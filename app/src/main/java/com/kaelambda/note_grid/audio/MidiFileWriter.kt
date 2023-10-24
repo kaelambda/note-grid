@@ -9,17 +9,15 @@ import java.io.File
 import javax.inject.Inject
 
 private const val RESOLUTION = 960
-class MidiFileWriter @Inject constructor() {
-
-    @NoteGridViewModelModule.OutputFile
-    @Inject lateinit var outputFile: File
-
+class MidiFileWriter @Inject constructor(
+    @NoteGridViewModelModule.OutputFile private val outputFile: File
+) {
     private val midiFileWriter = StandardMidiFileWriter()
     fun generateMidiFile(): File {
         val sequence = Sequence(Sequence.PPQ, RESOLUTION)
         val track = sequence.createTrack()
 
-        for (i in 0L..20L) {
+        for (i in 0L..8L) {
             track.add(MidiEvent(ShortMessage(), RESOLUTION * i))
         }
 

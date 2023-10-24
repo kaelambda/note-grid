@@ -1,12 +1,27 @@
 package com.kaelambda.note_grid.audio
 
+import android.content.Context
+import cn.sherlock.com.sun.media.sound.SF2Soundbank
 import cn.sherlock.com.sun.media.sound.SoftSynthesizer
+import dagger.hilt.android.qualifiers.ApplicationContext
 import jp.kshoji.javax.sound.midi.ShortMessage
 import javax.inject.Inject
 
 class MidiSoundController @Inject constructor(
-    private val synth: SoftSynthesizer
+    private val synth: SoftSynthesizer,
+    @ApplicationContext private val appContext: Context
 ) {
+
+    init {
+//        val sf = SF2Soundbank(appContext.assets.open("OPL-3_FM_128M.sf2"))
+        val sf = SF2Soundbank(appContext.assets.open("SmallTimGM6mb.sf2"))
+
+        synth.open()
+        synth.loadAllInstruments(sf)
+        synth.channels[0].programChange(0)
+        synth.channels[1].programChange(1)
+    }
+
     fun play(scaleDegree: Int) {
         val msg = ShortMessage()
         msg.setMessage(ShortMessage.NOTE_ON, 0, getNote(scaleDegree), 127)

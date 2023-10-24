@@ -32,7 +32,7 @@ fun Note(
 
     Surface(
         Modifier
-            .size(20.dp)
+            .size(24.dp)
             .toggleable(
                 value = isEnabled,
                 enabled = true,

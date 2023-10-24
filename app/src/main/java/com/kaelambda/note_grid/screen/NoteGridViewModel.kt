@@ -2,8 +2,9 @@ package com.kaelambda.note_grid.screen
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import cn.sherlock.com.sun.media.sound.SF2Soundbank
 import cn.sherlock.com.sun.media.sound.SoftSynthesizer
 import com.kaelambda.note_grid.audio.MidiFileWriter
 import com.kaelambda.note_grid.audio.MidiSoundController
@@ -25,10 +26,11 @@ class NoteGridViewModel @Inject constructor() : ViewModel() {
     @Inject lateinit var midiFileWriter: MidiFileWriter
     @Inject lateinit var mediaPlayer: MediaPlayer
 
-    private val useMidi = true
+    private val _useMidi = MutableLiveData(true)
+    val useMidi: LiveData<Boolean> = _useMidi
 
     fun playSound(scaleDegree: Int) {
-        if (useMidi) {
+        if (useMidi.value == true) {
             midiController.play(scaleDegree)
         } else {
             soundPoolController.play(scaleDegree)
@@ -36,9 +38,13 @@ class NoteGridViewModel @Inject constructor() : ViewModel() {
     }
 
     fun stopSound(scaleDegree: Int) {
-        if (useMidi) {
+        if (useMidi.value == true) {
             midiController.stop(scaleDegree)
         }
+    }
+
+    fun setUseMidi(value: Boolean) {
+        _useMidi.value = value
     }
 
     fun generateMidiFile() {
@@ -76,16 +82,7 @@ object NoteGridViewModelModule {
     }
 
     @Provides
-    fun providesSynth(@ApplicationContext appContext: Context): SoftSynthesizer {
-//        val sf = SF2Soundbank(appContext.assets.open("OPL-3_FM_128M.sf2"))
-        val sf = SF2Soundbank(appContext.assets.open("SmallTimGM6mb.sf2"))
-
-        val synth = SoftSynthesizer()
-        synth.open()
-        synth.loadAllInstruments(sf)
-        synth.channels[0].programChange(0)
-        synth.channels[1].programChange(1)
-
-        return synth
+    fun providesSynth(): SoftSynthesizer {
+        return SoftSynthesizer()
     }
 }
