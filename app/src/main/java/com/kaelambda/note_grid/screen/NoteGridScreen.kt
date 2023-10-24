@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -42,6 +43,7 @@ const val duration = 100f / xCount.toFloat()
 fun NoteGridScreen(viewModel: NoteGridViewModel) {
     var playing by remember { mutableStateOf(false) }
     var randomizationDensity by remember { mutableIntStateOf(15) }
+    var durationMillis by remember { mutableIntStateOf(2500) }
 
     val useMidi by viewModel.useMidi.observeAsState()
 
@@ -59,7 +61,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
             t.animateTo(
                 100f,
                 animationSpec = infiniteRepeatable(
-                    tween(5000, easing = LinearEasing)
+                    tween(durationMillis, easing = LinearEasing)
                 )
             )
         } else {
@@ -90,25 +92,48 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
 
             Spacer(Modifier.height(16.dp))
             Row {
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = if (useMidi == true) "Playing with MIDI" else "Playing with SoundPool"
-                )
-                Spacer(Modifier.width(16.dp))
                 Switch(
                     checked = useMidi ?: false,
                     onCheckedChange = { viewModel.setUseMidi(it) }
                 )
+                Spacer(Modifier.width(16.dp))
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = if (useMidi == true) "Playing with MIDI" else "Playing with SoundPool"
+                )
             }
 
             Spacer(Modifier.height(16.dp))
-            InstrumentSelector(viewModel.midiController)
+            Row {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = "Instrument:"
+                )
+                Spacer(Modifier.width(16.dp))
+                InstrumentSelector(viewModel.midiController)
+            }
+
+            Spacer(Modifier.height(16.dp))
+            Row {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = "Duration (in milliseconds): $durationMillis"
+                )
+                Spacer(Modifier.width(16.dp))
+                Slider(
+                    value = durationMillis.toFloat(),
+                    onValueChange = { durationMillis = it.toInt() },
+                    valueRange = 500f .. 10000f
+                )
+            }
             
             Spacer(Modifier.height(16.dp))
             Row {
-                Button(onClick = {
-                    noteMatrix.value = Array(xCount) {
-                        Array(yCount) { Random.nextInt(100) < randomizationDensity }
+                Button(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    onClick = {
+                        noteMatrix.value = Array(xCount) {
+                            Array(yCount) { Random.nextInt(100) < randomizationDensity }
                     }
                     playing = false
                 }) {
