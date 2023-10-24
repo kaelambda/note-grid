@@ -39,7 +39,7 @@ const val duration = 100f / xCount.toFloat()
 fun NoteGridScreen(viewModel: NoteGridViewModel) {
     var playing by remember { mutableStateOf(false) }
     var buttonText by remember { mutableStateOf("Play") }
-    var randomizationDensity by remember { mutableIntStateOf(25) }
+    var randomizationDensity by remember { mutableIntStateOf(15) }
 
     val noteMatrix = remember {
         mutableStateOf(
@@ -82,8 +82,13 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                 }) {
                     Text("Reset")
                 }
+            }
 
-                Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.height(16.dp))
+            InstrumentSelector(viewModel.midiController)
+            
+            Spacer(Modifier.height(16.dp))
+            Row {
                 Button(onClick = {
                     noteMatrix.value = Array(xCount) {
                         Array(yCount) { Random.nextInt(100) < randomizationDensity }
@@ -91,13 +96,14 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                 }) {
                     Text("Randomize")
                 }
-            }
 
-            Spacer(Modifier.height(16.dp))
-            TextField(value = if (randomizationDensity > 0) randomizationDensity.toString() else "",
-                onValueChange = { randomizationDensity = it.toIntOrNull() ?: 0 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
+                Spacer(Modifier.width(16.dp))
+                TextField(
+                    value = if (randomizationDensity > 0) randomizationDensity.toString() else "",
+                    onValueChange = { randomizationDensity = it.toIntOrNull() ?: 0 },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+            }
 
             Spacer(Modifier.height(16.dp))
             Button(onClick = viewModel::generateMidiFile) {
