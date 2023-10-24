@@ -15,15 +15,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,8 +41,9 @@ const val duration = 100f / xCount.toFloat()
 @Composable
 fun NoteGridScreen(viewModel: NoteGridViewModel) {
     var playing by remember { mutableStateOf(false) }
-    var buttonText by remember { mutableStateOf("Play") }
     var randomizationDensity by remember { mutableIntStateOf(15) }
+
+    val useMidi by viewModel.useMidi.observeAsState()
 
     val noteMatrix = remember {
         mutableStateOf(
@@ -71,17 +75,30 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
             Row {
                 Button(onClick = {
                     playing = !playing
-                    buttonText = if (playing) "Stop" else "Play"
                 }) {
-                    Text(buttonText)
+                    Text(if (playing) "Stop" else "Play")
                 }
 
                 Spacer(Modifier.width(16.dp))
                 Button(onClick = {
                     noteMatrix.value = Array(xCount) { Array(yCount) { false } }
+                    playing = false
                 }) {
                     Text("Reset")
                 }
+            }
+
+            Spacer(Modifier.height(16.dp))
+            Row {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = if (useMidi == true) "Playing with MIDI" else "Playing with SoundPool"
+                )
+                Spacer(Modifier.width(16.dp))
+                Switch(
+                    checked = useMidi ?: false,
+                    onCheckedChange = { viewModel.setUseMidi(it) }
+                )
             }
 
             Spacer(Modifier.height(16.dp))
@@ -93,6 +110,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                     noteMatrix.value = Array(xCount) {
                         Array(yCount) { Random.nextInt(100) < randomizationDensity }
                     }
+                    playing = false
                 }) {
                     Text("Randomize")
                 }
