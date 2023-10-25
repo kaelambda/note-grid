@@ -24,19 +24,21 @@ import androidx.compose.ui.unit.dp
 import com.kaelambda.note_grid.audio.MidiSoundController
 
 @Composable
-fun InstrumentSelector(midiController: MidiSoundController) {
+fun InstrumentSelector(midiController: MidiSoundController, enabled: Boolean) {
     var expanded by remember { mutableStateOf(false) }
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp)
-            .clickable { expanded = true },
-        color = MaterialTheme.colorScheme.primaryContainer
+            .clickable(enabled) { expanded = true },
+        color = if (enabled) MaterialTheme.colorScheme.primaryContainer
+                else MaterialTheme.colorScheme.secondary
     ) {
         Box {
             Text(
-                midiController.getCurrentInstrument(),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                if (enabled) midiController.getCurrentInstrument() else "N/A",
+                color = if (enabled) MaterialTheme.colorScheme.onPrimaryContainer
+                        else MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier.padding(16.dp, 8.dp).align(Alignment.CenterStart)
             )
 
