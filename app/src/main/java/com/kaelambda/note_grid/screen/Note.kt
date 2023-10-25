@@ -1,12 +1,14 @@
 package com.kaelambda.note_grid.screen
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -14,14 +16,15 @@ fun Note(
     noteId: Int,
     isPlaying: Boolean,
     isEnabled: Boolean,
+    size: Dp,
     playSound: (Int) -> Unit,
     stopSound: (Int) -> Unit,
     onValueChange: (Boolean) -> Unit
 ) {
     val color = when {
-        isPlaying -> { Color.Green }
-        isEnabled -> { Color.Red }
-        else -> { Color.Gray }
+        isPlaying -> { MaterialTheme.colorScheme.tertiary }
+        isEnabled -> { MaterialTheme.colorScheme.secondary }
+        else -> { MaterialTheme.colorScheme.secondaryContainer }
     }
 
     if (isPlaying) {
@@ -32,7 +35,8 @@ fun Note(
 
     Surface(
         Modifier
-            .size(24.dp)
+            .size(size)
+            .border(2.dp, MaterialTheme.colorScheme.outline)
             .toggleable(
                 value = isEnabled,
                 enabled = true,
