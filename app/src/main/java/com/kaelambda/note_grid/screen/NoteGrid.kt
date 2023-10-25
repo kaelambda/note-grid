@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 fun NoteGrid(
     noteMatrix: MutableState<Array<Array<Boolean>>>,
     t: Animatable<Float, AnimationVector1D>,
+    zoomedIn: Boolean,
     playSound: (Int) -> Unit,
     stopSound: (Int) -> Unit,
 ) {
@@ -27,7 +28,7 @@ fun NoteGrid(
     val screenWidth = configuration.screenWidthDp.dp
 
     var noteSize by remember { mutableStateOf(46.dp) }
-    noteSize = if (screenWidth / xCount > 46.dp)
+    noteSize = if (!zoomedIn || screenWidth / xCount > 46.dp)
         (screenWidth / xCount) - 2.dp
     else
         48.dp
