@@ -139,14 +139,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
             }
 
             Spacer(Modifier.height(16.dp))
-            Row {
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "Instrument:"
-                )
-                Spacer(Modifier.width(16.dp))
-                InstrumentSelector(viewModel.midiController, useMidi == true)
-            }
+            InstrumentSelector(viewModel.midiController, useMidi == true)
 
             Spacer(Modifier.height(16.dp))
             Row {

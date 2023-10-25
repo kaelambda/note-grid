@@ -8,15 +8,15 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class SoundPoolController @Inject constructor(@ApplicationContext context: Context) {
-    private val staccatoSynthIds = listOf(
-        R.raw.staccatosynth1,
-        R.raw.staccatosynth2,
-        R.raw.staccatosynth3,
-        R.raw.staccatosynth4,
-        R.raw.staccatosynth5,
-        R.raw.staccatosynth6,
-        R.raw.staccatosynth7,
-        R.raw.staccatosynth8,
+    private val synthIds = listOf(
+        R.raw.triangle_synth_1_c,
+        R.raw.triangle_synth_2_d,
+        R.raw.triangle_synth_3_dsharp,
+        R.raw.triangle_synth_4_f,
+        R.raw.triangle_synth_5_g,
+        R.raw.triangle_synth_6_gsharp,
+        R.raw.triangle_synth_7_asharp,
+        R.raw.triangle_synth_8_highc,
     )
 
     private val soundPool: SoundPool = SoundPool.Builder()
@@ -30,7 +30,7 @@ class SoundPoolController @Inject constructor(@ApplicationContext context: Conte
     private val soundPoolIds = mutableListOf<Int>()
 
     init {
-        for (id in staccatoSynthIds) {
+        for (id in synthIds) {
             soundPoolIds.add(soundPool.load(context, id, 1))
         }
     }
