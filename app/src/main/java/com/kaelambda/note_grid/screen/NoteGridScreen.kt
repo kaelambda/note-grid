@@ -35,6 +35,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,13 +52,13 @@ const val duration = 100f / xCount.toFloat()
 @Composable
 fun NoteGridScreen(viewModel: NoteGridViewModel) {
     var playing by remember { mutableStateOf(false) }
-    var randomizationDensity by remember { mutableIntStateOf(15) }
-    var durationMillis by remember { mutableIntStateOf(2500) }
-    var zoomedIn by remember { mutableStateOf(false) }
+    var randomizationDensity by rememberSaveable { mutableIntStateOf(15) }
+    var durationMillis by rememberSaveable { mutableIntStateOf(2500) }
+    var zoomedIn by rememberSaveable { mutableStateOf(false) }
 
     val useMidi by viewModel.useMidi.observeAsState()
 
-    val noteMatrix = remember {
+    val noteMatrix = rememberSaveable {
         mutableStateOf(
             Array(xCount) {
                 Array(yCount) { false }

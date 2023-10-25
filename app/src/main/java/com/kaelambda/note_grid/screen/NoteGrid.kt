@@ -37,8 +37,8 @@ fun NoteGrid(
         for (y in 0 until yCount) {
             Row {
                 for (x in 0 until xCount) {
-                    val startTime = remember { duration * x }
-                    val endTime = remember { startTime + duration }
+                    val startTime = duration * x
+                    val endTime = startTime + duration
 
                     val isEnabled = noteMatrix.value[x][y]
                     val isPlaying = isEnabled.and(t.value > startTime && t.value < endTime)
