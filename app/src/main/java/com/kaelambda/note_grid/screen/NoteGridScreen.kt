@@ -23,11 +23,13 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +41,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -102,16 +106,21 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                     Text("Reset")
                 }
 
-                Box(Modifier.fillMaxWidth()) {
-                    IconButton(
-                        onClick = { zoomedIn = !zoomedIn },
-                        modifier = Modifier.align(Alignment.CenterEnd),
-                    ) {
-                        Icon(
-                            if (zoomedIn) Icons.Default.KeyboardArrowUp
-                            else Icons.Default.KeyboardArrowDown,
-                            contentDescription = if (zoomedIn) "Zoom out" else "Zoom in"
-                        )
+                val configuration = LocalConfiguration.current
+                val screenWidth = configuration.screenWidthDp.dp
+                val canZoom = screenWidth / xCount < 48.dp
+                if (canZoom) {
+                    Box(Modifier.fillMaxWidth()) {
+                        IconButton(
+                            onClick = { zoomedIn = !zoomedIn },
+                            modifier = Modifier.align(Alignment.CenterEnd),
+                        ) {
+                            Icon(
+                                if (zoomedIn) Icons.Default.KeyboardArrowUp
+                                else Icons.Default.KeyboardArrowDown,
+                                contentDescription = if (zoomedIn) "Zoom out" else "Zoom in"
+                            )
+                        }
                     }
                 }
             }
@@ -136,7 +145,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                     text = "Instrument:"
                 )
                 Spacer(Modifier.width(16.dp))
-                InstrumentSelector(viewModel.midiController)
+                InstrumentSelector(viewModel.midiController, useMidi == true)
             }
 
             Spacer(Modifier.height(16.dp))
@@ -149,7 +158,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                 Slider(
                     value = durationMillis.toFloat(),
                     onValueChange = { durationMillis = it.toInt() },
-                    valueRange = 500f .. 10000f
+                    valueRange = 500f .. 5000f
                 )
             }
             
@@ -170,7 +179,13 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                 TextField(
                     value = if (randomizationDensity > 0) randomizationDensity.toString() else "",
                     onValueChange = { randomizationDensity = it.toIntOrNull() ?: 0 },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        disabledContainerColor = MaterialTheme.colorScheme.secondary
+                    ),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer)
                 )
             }
 
