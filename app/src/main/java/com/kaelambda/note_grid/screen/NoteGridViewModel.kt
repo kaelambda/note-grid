@@ -55,5 +55,6 @@ class NoteGridViewModel @Inject constructor() : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         soundPoolController.release()
+        midiController.close()
     }
 }

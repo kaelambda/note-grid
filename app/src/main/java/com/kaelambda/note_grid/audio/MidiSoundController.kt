@@ -31,6 +31,10 @@ class MidiSoundController @Inject constructor(
         synth.channels[0].programChange(0)
     }
 
+    fun close() {
+        synth.close()
+    }
+
     fun play(scaleDegree: Int) {
         val message = ShortMessage()
         message.setMessage(ShortMessage.NOTE_ON, 0, getNote(scaleDegree), 127)
