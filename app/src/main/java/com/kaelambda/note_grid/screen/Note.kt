@@ -40,7 +40,7 @@ fun Note(
     Surface(
         Modifier
             .size(size)
-            .border(2.dp, MaterialTheme.colorScheme.outline)
+            .border(1.dp, MaterialTheme.colorScheme.outline)
             .toggleable(
                 value = isEnabled,
                 enabled = true,

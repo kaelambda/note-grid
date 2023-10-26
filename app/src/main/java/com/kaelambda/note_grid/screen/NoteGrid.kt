@@ -2,10 +2,14 @@ package com.kaelambda.note_grid.screen
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -42,26 +46,34 @@ fun NoteGrid(
     else
         48.dp
 
-    Column(Modifier.horizontalScroll(rememberScrollState())) {
-        for (y in 0 until yCount) {
-            Row {
-                for (x in 0 until xCount) {
-                    val startTime = durationAsPercentage * x
-                    val endTime = startTime + durationAsPercentage
+    val animatedNoteSize by animateDpAsState(targetValue = noteSize, label = "noteSize")
 
-                    val isEnabled = noteMatrix.value[x][y]
-                    val isPlaying = isEnabled.and(time.value > startTime && time.value < endTime)
+    Box(
+        Modifier
+            .border(2.dp, MaterialTheme.colorScheme.outline)
+            .horizontalScroll(rememberScrollState())) {
+        Column {
+            for (y in 0 until yCount) {
+                Row {
+                    for (x in 0 until xCount) {
+                        val startTime = durationAsPercentage * x
+                        val endTime = startTime + durationAsPercentage
 
-                    Note(
-                        7 - y,
-                        isPlaying,
-                        isEnabled,
-                        noteSize,
-                        playSound,
-                        stopSound
-                    ) {
-                        noteMatrix.value = noteMatrix.value.clone().apply {
-                            this[x][y] = it
+                        val isEnabled = noteMatrix.value[x][y]
+                        val isPlaying =
+                            isEnabled.and(time.value > startTime && time.value < endTime)
+
+                        Note(
+                            7 - y,
+                            isPlaying,
+                            isEnabled,
+                            animatedNoteSize,
+                            playSound,
+                            stopSound
+                        ) {
+                            noteMatrix.value = noteMatrix.value.clone().apply {
+                                this[x][y] = it
+                            }
                         }
                     }
                 }
