@@ -7,6 +7,11 @@ import com.kaelambda.note_grid.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+/**
+ * Playback controller backed by a SoundPool object.
+ *
+ * SoundPool is very simple to use, but relies on us to provide the set of audio files.
+ */
 class SoundPoolController @Inject constructor(@ApplicationContext context: Context) {
     private val synthIds = listOf(
         R.raw.triangle_synth_1_c,

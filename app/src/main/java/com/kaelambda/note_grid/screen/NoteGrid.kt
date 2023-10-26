@@ -16,10 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 
+const val durationAsPercentage = 100f / xCount.toFloat()
+
+/**
+ * This is the core feature of the app: A grid of notes that can be enabled or disabled, and that
+ * light up and play sound when it's their moment during playback.
+ *
+ * Note size is based on the screen width, unless we're currently zoomed in, in which case they
+ * will be 48.dp as advised by Google's accessibility guidelines for clickable components.
+ */
 @Composable
 fun NoteGrid(
     noteMatrix: MutableState<Array<Array<Boolean>>>,
-    t: Animatable<Float, AnimationVector1D>,
+    time: Animatable<Float, AnimationVector1D>,
     zoomedIn: Boolean,
     playSound: (Int) -> Unit,
     stopSound: (Int) -> Unit,
@@ -37,11 +46,11 @@ fun NoteGrid(
         for (y in 0 until yCount) {
             Row {
                 for (x in 0 until xCount) {
-                    val startTime = duration * x
-                    val endTime = startTime + duration
+                    val startTime = durationAsPercentage * x
+                    val endTime = startTime + durationAsPercentage
 
                     val isEnabled = noteMatrix.value[x][y]
-                    val isPlaying = isEnabled.and(t.value > startTime && t.value < endTime)
+                    val isPlaying = isEnabled.and(time.value > startTime && time.value < endTime)
 
                     Note(
                         7 - y,

@@ -51,8 +51,18 @@ import kotlin.random.Random
 
 const val xCount = 16
 const val yCount = 8
-const val duration = 100f / xCount.toFloat()
 
+/**
+ * The root of our view.
+ *
+ * First, the state of our UI is declared and remembered. This includes a matrix of booleans
+ * representing which notes are enabled, and a 'time' Animatable for progressing through the
+ * grid when playing.
+ *
+ * Then, a Surface is populated with our screen's NoteGrid and UI controls. Some UI controls have
+ * been refactored into their own components, and we could consider doing that for others to reduce
+ * the length of this function.
+ */
 @Composable
 fun NoteGridScreen(viewModel: NoteGridViewModel) {
     var playing by remember { mutableStateOf(false) }
@@ -70,17 +80,17 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
         )
     }
 
-    val t = remember { Animatable(0f) }
+    val time = remember { Animatable(0f) }
     LaunchedEffect(playing) {
         if (playing) {
-            t.animateTo(
+            time.animateTo(
                 100f,
                 animationSpec = infiniteRepeatable(
                     tween(durationMillis, easing = LinearEasing)
                 )
             )
         } else {
-            t.animateTo(0f, snap())
+            time.animateTo(0f, snap())
         }
     }
 
@@ -88,16 +98,18 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
         .fillMaxSize()
         .verticalScroll(rememberScrollState())) {
         Column(modifier = Modifier.padding(16.dp)) {
-            NoteGrid(noteMatrix, t, zoomedIn, viewModel::playSound, viewModel::stopSound)
+            NoteGrid(noteMatrix, time, zoomedIn, viewModel::playSound, viewModel::stopSound)
 
             Spacer(Modifier.height(16.dp))
             Row {
+                // Play button
                 Button(onClick = {
                     playing = !playing
                 }) {
                     Text(if (playing) "Stop" else "Play")
                 }
 
+                // Reset button
                 Spacer(Modifier.width(16.dp))
                 Button(onClick = {
                     noteMatrix.value = Array(xCount) { Array(yCount) { false } }
@@ -106,6 +118,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                     Text("Reset")
                 }
 
+                // Zoom button
                 val configuration = LocalConfiguration.current
                 val screenWidth = configuration.screenWidthDp.dp
                 val canZoom = screenWidth / xCount < 48.dp
@@ -125,6 +138,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                 }
             }
 
+            // MIDI / SoundPool switch
             Spacer(Modifier.height(16.dp))
             Row {
                 Switch(
@@ -141,6 +155,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
             Spacer(Modifier.height(16.dp))
             InstrumentSelector(viewModel.midiController, useMidi == true)
 
+            // Duration slider
             Spacer(Modifier.height(16.dp))
             Row {
                 Text(
@@ -154,7 +169,8 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                     valueRange = 500f .. 5000f
                 )
             }
-            
+
+            // Randomization
             Spacer(Modifier.height(16.dp))
             Row {
                 Button(
