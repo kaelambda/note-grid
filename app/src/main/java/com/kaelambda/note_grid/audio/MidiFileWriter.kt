@@ -9,6 +9,16 @@ import java.io.File
 import javax.inject.Inject
 
 private const val RESOLUTION = 960
+
+/**
+ * Utility for writing MIDI data to a file.
+ *
+ * This is currently just a test of MIDI file-writing capability. It writes and plays a simple .mid
+ * file containing a piano playing middle C eight times.
+ *
+ * If the ability to save the current NoteGrid contents as a MIDI file were to be added, that
+ * function would go here.
+ */
 class MidiFileWriter @Inject constructor(
     @NoteGridViewModelModule.OutputFile private val outputFile: File
 ) {

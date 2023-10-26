@@ -26,6 +26,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kaelambda.note_grid.audio.MidiSoundController
 
+/**
+ * There doesn't appear to be a material component for the part of a drop-down menu users see
+ * before they open one, so that has been constructed using a box containing Text and Icon elements
+ * along with the DropDown.
+ *
+ * The MidiSoundController is used to fetch and select instruments. It could be better Compose
+ * architectural practice to pass the info we're currently fetching (current and available
+ * instruments) in as parameters instead of using getters, or to make them available in
+ * MidiController as observable properties, but this seems to work just fine.
+ */
 @Composable
 fun InstrumentSelector(midiController: MidiSoundController, enabled: Boolean) {
     var expanded by remember { mutableStateOf(false) }

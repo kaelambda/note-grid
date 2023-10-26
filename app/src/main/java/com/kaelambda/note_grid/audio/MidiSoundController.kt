@@ -7,6 +7,16 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import jp.kshoji.javax.sound.midi.ShortMessage
 import javax.inject.Inject
 
+/**
+ * Playback controller using MIDI. This relies on SoftSynthesizer and the MidiDriver library.
+ *
+ * On initialize, an SF2Soundbank is loaded. You can replace the one included with your own by
+ * placing a different .sf2 file in the 'assets' folder, and change the fileName passed into
+ * appContext.assets.open().
+ *
+ * This class sends NOTE_ON and NOTE_OFF messages to the synth and provides functions to get and
+ * set the current instrument, and to get the list of all available instruments.
+ */
 class MidiSoundController @Inject constructor(
     private val synth: SoftSynthesizer,
     @ApplicationContext private val appContext: Context
@@ -19,7 +29,6 @@ class MidiSoundController @Inject constructor(
         synth.open()
         synth.loadAllInstruments(sf)
         synth.channels[0].programChange(0)
-        synth.channels[1].programChange(1)
     }
 
     fun play(scaleDegree: Int) {

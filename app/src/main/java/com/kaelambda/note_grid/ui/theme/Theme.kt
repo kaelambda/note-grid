@@ -15,6 +15,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+/**
+ * I've changed 'tertiary' and added 'secondaryContainer' values to better suit the app.
+ * These colors are accessed within components through MaterialTheme.colorScheme,
+ * e.g. MaterialTheme.colorScheme.secondary will return PurpleGrey80 when in dark mode and
+ * PurpleGrey40 in light mode.
+ */
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
@@ -39,6 +45,9 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+/**
+ * The only change I've made to this is to disable dynamicColor.
+ */
 @Composable
 fun NoteGridTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

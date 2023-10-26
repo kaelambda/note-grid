@@ -11,6 +11,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * Notes are toggleable surfaces that trigger play and stop events when the 'isPlaying' parameter
+ * changes. They have a thin border and also set their color based on their state.
+ */
 @Composable
 fun Note(
     noteId: Int,
