@@ -23,24 +23,24 @@ class MidiSoundController @Inject constructor(
 ) {
 
     init {
-//        val sf = SF2Soundbank(appContext.assets.open("OPL-3_FM_128M.sf2"))
-        val sf = SF2Soundbank(appContext.assets.open("SmallTimGM6mb.sf2"))
+//        val soundbank = SF2Soundbank(appContext.assets.open("OPL-3_FM_128M.sf2"))
+        val soundbank = SF2Soundbank(appContext.assets.open("SmallTimGM6mb.sf2"))
 
         synth.open()
-        synth.loadAllInstruments(sf)
+        synth.loadAllInstruments(soundbank)
         synth.channels[0].programChange(0)
     }
 
     fun play(scaleDegree: Int) {
-        val msg = ShortMessage()
-        msg.setMessage(ShortMessage.NOTE_ON, 0, getNote(scaleDegree), 127)
-        synth.receiver.send(msg, -1)
+        val message = ShortMessage()
+        message.setMessage(ShortMessage.NOTE_ON, 0, getNote(scaleDegree), 127)
+        synth.receiver.send(message, -1)
     }
 
     fun stop(scaleDegree: Int) {
-        val msg = ShortMessage()
-        msg.setMessage(ShortMessage.NOTE_OFF, 0, getNote(scaleDegree), 127)
-        synth.receiver.send(msg, -1)
+        val message = ShortMessage()
+        message.setMessage(ShortMessage.NOTE_OFF, 0, getNote(scaleDegree), 127)
+        synth.receiver.send(message, -1)
     }
 
     fun getCurrentInstrument(): String {

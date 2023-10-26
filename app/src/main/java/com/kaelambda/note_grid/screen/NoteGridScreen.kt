@@ -166,7 +166,8 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                 Slider(
                     value = durationMillis.toFloat(),
                     onValueChange = { durationMillis = it.toInt() },
-                    valueRange = 500f .. 5000f
+                    valueRange = 500f .. 5000f,
+                    steps = 8
                 )
             }
 
@@ -185,6 +186,11 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                 }
 
                 Spacer(Modifier.width(16.dp))
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = "Density:"
+                )
+                Spacer(Modifier.width(8.dp))
                 TextField(
                     value = if (randomizationDensity > 0) randomizationDensity.toString() else "",
                     onValueChange = { randomizationDensity = it.toIntOrNull() ?: 0 },
