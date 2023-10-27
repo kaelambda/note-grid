@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -94,119 +95,129 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
         }
     }
 
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            NoteGrid(noteMatrix, time, zoomedIn, viewModel::playSound, viewModel::stopSound)
+    Scaffold(
+        topBar = {
+            Text("NoteGrid by kλ")
+        }
+    )
+    {
+        Surface(
+            modifier = Modifier
+                .padding(it)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                NoteGrid(noteMatrix, time, zoomedIn, viewModel::playSound, viewModel::stopSound)
 
-            Spacer(Modifier.height(16.dp))
-            Row {
-                // Play button
-                Button(onClick = {
-                    playing = !playing
-                }) {
-                    Text(if (playing) "Stop" else "Play")
-                }
+                Spacer(Modifier.height(16.dp))
+                Row {
+                    // Play button
+                    Button(onClick = {
+                        playing = !playing
+                    }) {
+                        Text(if (playing) "Stop" else "Play")
+                    }
 
-                // Reset button
-                Spacer(Modifier.width(16.dp))
-                Button(onClick = {
-                    noteMatrix.value = Array(xCount) { Array(yCount) { false } }
-                    playing = false
-                }) {
-                    Text("Reset")
-                }
+                    // Reset button
+                    Spacer(Modifier.width(16.dp))
+                    Button(onClick = {
+                        noteMatrix.value = Array(xCount) { Array(yCount) { false } }
+                        playing = false
+                    }) {
+                        Text("Reset")
+                    }
 
-                // Zoom button
-                val configuration = LocalConfiguration.current
-                val screenWidth = configuration.screenWidthDp.dp
-                val canZoom = screenWidth / xCount < 48.dp
-                if (canZoom) {
-                    Box(Modifier.fillMaxWidth()) {
-                        IconButton(
-                            onClick = { zoomedIn = !zoomedIn },
-                            modifier = Modifier.align(Alignment.CenterEnd),
-                        ) {
-                            Icon(
-                                if (zoomedIn) Icons.Default.KeyboardArrowUp
-                                else Icons.Default.KeyboardArrowDown,
-                                contentDescription = if (zoomedIn) "Zoom out" else "Zoom in"
-                            )
+                    // Zoom button
+                    val configuration = LocalConfiguration.current
+                    val screenWidth = configuration.screenWidthDp.dp
+                    val canZoom = screenWidth / xCount < 48.dp
+                    if (canZoom) {
+                        Box(Modifier.fillMaxWidth()) {
+                            IconButton(
+                                onClick = { zoomedIn = !zoomedIn },
+                                modifier = Modifier.align(Alignment.CenterEnd),
+                            ) {
+                                Icon(
+                                    if (zoomedIn) Icons.Default.KeyboardArrowUp
+                                    else Icons.Default.KeyboardArrowDown,
+                                    contentDescription = if (zoomedIn) "Zoom out" else "Zoom in"
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            // MIDI / SoundPool switch
-            Spacer(Modifier.height(16.dp))
-            Row {
-                Switch(
-                    checked = useMidi ?: false,
-                    onCheckedChange = { viewModel.setUseMidi(it) }
-                )
-                Spacer(Modifier.width(16.dp))
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = if (useMidi == true) "Playing with MIDI" else "Playing with SoundPool"
-                )
-            }
-
-            Spacer(Modifier.height(16.dp))
-            InstrumentSelector(viewModel.midiController, useMidi == true)
-
-            // Duration slider
-            Spacer(Modifier.height(16.dp))
-            Row {
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "Duration (ms): $durationMillis"
-                )
-                Spacer(Modifier.width(16.dp))
-                Slider(
-                    value = durationMillis.toFloat(),
-                    onValueChange = { durationMillis = it.toInt() },
-                    valueRange = 500f .. 5000f,
-                    steps = 8
-                )
-            }
-
-            // Randomization
-            Spacer(Modifier.height(16.dp))
-            Row {
-                Button(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    onClick = {
-                        noteMatrix.value = Array(xCount) {
-                            Array(yCount) { Random.nextInt(100) < randomizationDensity }
-                    }
-                    playing = false
-                }) {
-                    Text("Randomize")
+                // MIDI / SoundPool switch
+                Spacer(Modifier.height(16.dp))
+                Row {
+                    Switch(
+                        checked = useMidi ?: false,
+                        onCheckedChange = { viewModel.setUseMidi(it) }
+                    )
+                    Spacer(Modifier.width(16.dp))
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = if (useMidi == true) "Playing with MIDI" else "Playing with SoundPool"
+                    )
                 }
 
-                Spacer(Modifier.width(16.dp))
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "Density:"
-                )
-                Spacer(Modifier.width(8.dp))
-                TextField(
-                    value = if (randomizationDensity > 0) randomizationDensity.toString() else "",
-                    onValueChange = { randomizationDensity = it.toIntOrNull() ?: 0 },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.secondary
-                    ),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer)
-                )
-            }
+                Spacer(Modifier.height(16.dp))
+                InstrumentSelector(viewModel.midiController, useMidi == true)
 
-            Spacer(Modifier.height(16.dp))
-            Button(onClick = viewModel::generateMidiFile) {
-                Text("Generate and play MIDI file")
+                // Duration slider
+                Spacer(Modifier.height(16.dp))
+                Row {
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = "Duration (ms): $durationMillis"
+                    )
+                    Spacer(Modifier.width(16.dp))
+                    Slider(
+                        value = durationMillis.toFloat(),
+                        onValueChange = { durationMillis = it.toInt() },
+                        valueRange = 500f..5000f,
+                        steps = 17
+                    )
+                }
+
+                // Randomization
+                Spacer(Modifier.height(16.dp))
+                Row {
+                    Button(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        onClick = {
+                            noteMatrix.value = Array(xCount) {
+                                Array(yCount) { Random.nextInt(100) < randomizationDensity }
+                            }
+                            playing = false
+                        }) {
+                        Text("Randomize")
+                    }
+
+                    Spacer(Modifier.width(16.dp))
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = "Density:"
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    TextField(
+                        value = if (randomizationDensity > 0) randomizationDensity.toString() else "",
+                        onValueChange = { randomizationDensity = it.toIntOrNull() ?: 0 },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            disabledContainerColor = MaterialTheme.colorScheme.secondary
+                        ),
+                        textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    )
+                }
+
+                Spacer(Modifier.height(16.dp))
+                Button(onClick = viewModel::generateMidiFile) {
+                    Text("Generate and play MIDI file")
+                }
             }
         }
     }
