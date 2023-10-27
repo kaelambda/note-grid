@@ -147,7 +147,7 @@ public final class MidiSystem {
 	 * @throws IllegalArgumentException if the device not found.
 	 */
     @NonNull
-    public static MidiDevice getMidiDevice(@NonNull final Info info) throws MidiUnavailableException, IllegalArgumentException {
+    public static MidiDevice getMidiDevice(@NonNull final MidiDevice.Info info) throws MidiUnavailableException, IllegalArgumentException {
         if (midiDevices.isEmpty()) {
             throw new MidiUnavailableException("MidiDevice not found");
         }
