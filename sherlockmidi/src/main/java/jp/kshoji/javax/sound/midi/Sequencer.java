@@ -82,14 +82,14 @@ public interface Sequencer extends MidiDevice {
      * @return the {@link SyncMode} for master.
      */
     @NonNull
-    SyncMode getMasterSyncMode();
+    Sequencer.SyncMode getMasterSyncMode();
 
     /**
      * Set the {@link SyncMode} for master.
      * 
      * @param sync the {@link SyncMode} for master.
      */
-    void setMasterSyncMode(@NonNull SyncMode sync);
+    void setMasterSyncMode(@NonNull Sequencer.SyncMode sync);
     
     /**
      * Get the available {@link SyncMode} for slave.
@@ -105,13 +105,13 @@ public interface Sequencer extends MidiDevice {
      * @return the {@link SyncMode} for slave.
      */
     @NonNull
-    SyncMode getSlaveSyncMode();
+    Sequencer.SyncMode getSlaveSyncMode();
     
     /**
      * Set the {@link SyncMode} for slave.
      * @param sync the {@link SyncMode} for slave.
      */
-    void setSlaveSyncMode(@NonNull SyncMode sync);
+    void setSlaveSyncMode(@NonNull Sequencer.SyncMode sync);
 
     /**
      * Get the {@link Sequence}
