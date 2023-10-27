@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
@@ -59,12 +62,16 @@ fun InstrumentSelector(midiController: MidiSoundController, enabled: Boolean) {
                     if (enabled) midiController.getCurrentInstrument() else "N/A",
                     color = if (enabled) MaterialTheme.colorScheme.onPrimaryContainer
                     else MaterialTheme.colorScheme.onSecondary,
-                    modifier = Modifier.padding(16.dp, 8.dp).align(Alignment.CenterStart)
+                    modifier = Modifier
+                        .padding(16.dp, 8.dp)
+                        .align(Alignment.CenterStart)
                 )
 
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
-                    modifier = Modifier.padding(16.dp, 0.dp).align(Alignment.CenterEnd),
+                    modifier = Modifier
+                        .padding(16.dp, 0.dp)
+                        .align(Alignment.CenterEnd),
                     contentDescription = "Localized description"
                 )
 
@@ -72,14 +79,20 @@ fun InstrumentSelector(midiController: MidiSoundController, enabled: Boolean) {
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
-                    for (instrument in midiController.getAvailableInstruments()) {
-                        DropdownMenuItem(
-                            text = { Text(instrument) },
-                            onClick = {
-                                midiController.selectInstrument(instrument)
-                                expanded = false
+                    // Explicit size is needed for LazyColumn to work within DropdownMenu
+                    // Perhaps we could calculate the width though
+                    Box(modifier = Modifier.size(width = 200.dp, height = 300.dp)) {
+                        LazyColumn {
+                            items(midiController.getAvailableInstruments()) { instrument ->
+                                DropdownMenuItem(
+                                    text = { Text(instrument) },
+                                    onClick = {
+                                        midiController.selectInstrument(instrument)
+                                        expanded = false
+                                    }
+                                )
                             }
-                        )
+                        }
                     }
                 }
             }
