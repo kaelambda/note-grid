@@ -44,9 +44,12 @@ class NoteGridViewModel @Inject constructor() : ViewModel() {
         _useMidi.value = value
     }
 
-    fun generateMidiFile() {
+    fun saveAndPlayCompositionAsMidiFile(noteGrid: Array<Array<Boolean>>) {
+        mediaPlayer.reset()
         mediaPlayer.setDataSource(
-            midiFileWriter.generateMidiFile().toString()
+            midiFileWriter
+                .writeCompositionToMidiFile(noteGrid, midiController.getCurrentInstrumentId())
+                .toString()
         )
         mediaPlayer.prepare()
         mediaPlayer.start()

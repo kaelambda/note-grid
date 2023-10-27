@@ -1,6 +1,7 @@
 package com.kaelambda.note_grid.audio
 
 import com.kaelambda.note_grid.screen.NoteGridViewModelModule
+import com.kaelambda.note_grid.screen.xCount
 import jp.kshoji.javax.sound.midi.MidiEvent
 import jp.kshoji.javax.sound.midi.Sequence
 import jp.kshoji.javax.sound.midi.ShortMessage
@@ -9,27 +10,40 @@ import java.io.File
 import javax.inject.Inject
 
 private const val RESOLUTION = 960
+private const val EIGHTH_NOTE = RESOLUTION / 2
 
 /**
- * Utility for writing MIDI data to a file.
- *
- * This is currently just a test of MIDI file-writing capability. It writes and plays a simple .mid
- * file containing a piano playing middle C eight times.
- *
- * If the ability to save the current NoteGrid contents as a MIDI file were to be added, that
- * function would go here.
+ * Utility for writing MIDI data representing the NoteGrid to a file
  */
 class MidiFileWriter @Inject constructor(
     @NoteGridViewModelModule.OutputFile private val outputFile: File
 ) {
     private val midiFileWriter = StandardMidiFileWriter()
-    fun generateMidiFile(): File {
+
+    fun writeCompositionToMidiFile(noteGrid: Array<Array<Boolean>>, instrument: Int): File {
         val sequence = Sequence(Sequence.PPQ, RESOLUTION)
         val track = sequence.createTrack()
 
-        for (i in 0L..8L) {
-            track.add(MidiEvent(ShortMessage(), RESOLUTION * i))
+        track.add(MidiEvent(
+            ShortMessage(ShortMessage.PROGRAM_CHANGE, instrument, 0), 0L)
+        )
+
+        for ((x, column) in noteGrid.withIndex()) {
+            for ((y, enabled) in column.withIndex()) {
+                if (enabled) {
+                    val onMessage = ShortMessage(ShortMessage.NOTE_ON, 0, getNote(7 - y), 127)
+                    track.add(MidiEvent(onMessage, EIGHTH_NOTE * x.toLong()))
+                }
+            }
+            for ((y, _) in column.withIndex()) {
+                val offMessage = ShortMessage(ShortMessage.NOTE_OFF, 0, getNote(7 - y), 127)
+                track.add(MidiEvent(offMessage, (EIGHTH_NOTE * x.toLong()) + EIGHTH_NOTE))
+            }
         }
+
+        val stopMessage = ShortMessage()
+        stopMessage.setMessage(ShortMessage.STOP)
+        track.add(MidiEvent(stopMessage, EIGHTH_NOTE * xCount.toLong() + RESOLUTION))
 
         midiFileWriter.write(sequence, 0, outputFile)
         return outputFile
