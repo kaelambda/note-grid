@@ -32,9 +32,8 @@ The "Randomize" button replaces the contents of the grid with random notes.
 The text field to the right of the button controls the percentage chance of
 each note being enabled.
 
-The "Generate and play MIDI file" button is currently just a test of MIDI
-file-writing capability. It writes and plays a simple .mid file containing
-a piano playing middle C eight times.
+The "Save and play composition as MIDI file" is a test of MIDI file-writing capability.
+It writes out a MIDI file from the contents of the grid, then immediately plays it back.
 
 ---
 

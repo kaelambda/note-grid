@@ -215,8 +215,8 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                 }
 
                 Spacer(Modifier.height(16.dp))
-                Button(onClick = viewModel::generateMidiFile) {
-                    Text("Generate and play MIDI file")
+                Button(onClick = { viewModel.saveAndPlayCompositionAsMidiFile(noteMatrix.value) }) {
+                    Text("Save and play composition as MIDI file")
                 }
             }
         }

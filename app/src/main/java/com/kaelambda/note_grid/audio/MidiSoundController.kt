@@ -51,6 +51,10 @@ class MidiSoundController @Inject constructor(
         return synth.loadedInstruments[synth.channels[0].program].name
     }
 
+    fun getCurrentInstrumentId(): Int {
+        return synth.channels[0].program
+    }
+
     fun getAvailableInstruments(): List<String> {
         return synth.loadedInstruments.map { instrument -> instrument.name }
     }
@@ -61,20 +65,5 @@ class MidiSoundController @Inject constructor(
                     instrument -> instrument.name == name
             }?.patch?.program ?: 0
         )
-    }
-
-    private fun getNote(scaleDegree: Int): Int {
-        return when (scaleDegree) {
-            0 -> 60
-            1 -> 62
-            2 -> 63
-            3 -> 65
-            4 -> 67
-            5 -> 68
-            6 -> 70
-            7 -> 72
-            8 -> 74
-            else -> 60
-        }
     }
 }
