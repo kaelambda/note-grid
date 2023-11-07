@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun Note(
-    noteId: Int,
+    scaleDegree: Int,
     isPlaying: Boolean,
     isEnabled: Boolean,
     size: Dp,
@@ -32,9 +32,9 @@ fun Note(
     }
 
     if (isPlaying) {
-        playSound(noteId)
+        playSound(scaleDegree)
     } else {
-        stopSound(noteId)
+        stopSound(scaleDegree)
     }
 
     Surface(

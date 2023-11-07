@@ -18,8 +18,8 @@ import javax.inject.Inject
  * set the current instrument, and to get the list of all available instruments.
  */
 class MidiSoundController @Inject constructor(
-    private val synth: SoftSynthesizer,
-    @ApplicationContext private val appContext: Context
+    @ApplicationContext private val appContext: Context,
+    private val synth: SoftSynthesizer
 ) {
 
     init {
@@ -36,14 +36,12 @@ class MidiSoundController @Inject constructor(
     }
 
     fun play(scaleDegree: Int) {
-        val message = ShortMessage()
-        message.setMessage(ShortMessage.NOTE_ON, 0, getNote(scaleDegree), 127)
+        val message = ShortMessage(ShortMessage.NOTE_ON, 0, getNote(scaleDegree), 127)
         synth.receiver.send(message, -1)
     }
 
     fun stop(scaleDegree: Int) {
-        val message = ShortMessage()
-        message.setMessage(ShortMessage.NOTE_OFF, 0, getNote(scaleDegree), 127)
+        val message = ShortMessage(ShortMessage.NOTE_OFF, 0, getNote(scaleDegree), 127)
         synth.receiver.send(message, -1)
     }
 

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
@@ -75,6 +76,7 @@ fun InstrumentSelector(midiController: MidiSoundController, enabled: Boolean) {
                     contentDescription = "Localized description"
                 )
 
+                val state = rememberLazyListState()
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
@@ -82,7 +84,7 @@ fun InstrumentSelector(midiController: MidiSoundController, enabled: Boolean) {
                     // Explicit size is needed for LazyColumn to work within DropdownMenu
                     // Perhaps we could calculate the width though
                     Box(modifier = Modifier.size(width = 200.dp, height = 300.dp)) {
-                        LazyColumn {
+                        LazyColumn(Modifier, state) {
                             items(midiController.getAvailableInstruments()) { instrument ->
                                 DropdownMenuItem(
                                     text = { Text(instrument) },
