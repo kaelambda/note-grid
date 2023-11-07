@@ -153,7 +153,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                 Row {
                     Switch(
                         checked = useMidi ?: false,
-                        onCheckedChange = { viewModel.setUseMidi(it) }
+                        onCheckedChange = { checked -> viewModel.setUseMidi(checked) }
                     )
                     Spacer(Modifier.width(16.dp))
                     Text(
@@ -175,7 +175,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                     Spacer(Modifier.width(16.dp))
                     Slider(
                         value = durationMillis.toFloat(),
-                        onValueChange = { durationMillis = it.toInt() },
+                        onValueChange = { value -> durationMillis = value.toInt() },
                         valueRange = 500f..5000f,
                         steps = 17
                     )
@@ -203,7 +203,7 @@ fun NoteGridScreen(viewModel: NoteGridViewModel) {
                     Spacer(Modifier.width(8.dp))
                     TextField(
                         value = if (randomizationDensity > 0) randomizationDensity.toString() else "",
-                        onValueChange = { randomizationDensity = it.toIntOrNull() ?: 0 },
+                        onValueChange = { value -> randomizationDensity = value.toIntOrNull() ?: 0 },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
