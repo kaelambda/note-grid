@@ -28,7 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kaelambda.note_grid.audio.MidiSoundController
+import com.kaelambda.note_grid.audio.MidiPlaybackController
 
 /**
  * There doesn't appear to be a material component for the part of a drop-down menu users see
@@ -41,7 +41,7 @@ import com.kaelambda.note_grid.audio.MidiSoundController
  * MidiController as observable properties, but this seems to work just fine.
  */
 @Composable
-fun InstrumentSelector(midiController: MidiSoundController, enabled: Boolean) {
+fun InstrumentSelector(midiController: MidiPlaybackController, enabled: Boolean) {
     var expanded by remember { mutableStateOf(false) }
 
     Row {

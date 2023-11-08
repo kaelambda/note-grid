@@ -17,14 +17,14 @@ import javax.inject.Inject
  * This class sends NOTE_ON and NOTE_OFF messages to the synth and provides functions to get and
  * set the current instrument, and to get the list of all available instruments.
  */
-class MidiSoundController @Inject constructor(
+class MidiPlaybackController @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val synth: SoftSynthesizer
 ) {
 
     init {
-//        val soundbank = SF2Soundbank(appContext.assets.open("OPL-3_FM_128M.sf2"))
-        val soundbank = SF2Soundbank(appContext.assets.open("SmallTimGM6mb.sf2"))
+        val soundbank = SF2Soundbank(appContext.assets.open("OPL-3_FM_128M.sf2"))
+//        val soundbank = SF2Soundbank(appContext.assets.open("SmallTimGM6mb.sf2"))
 
         synth.open()
         synth.loadAllInstruments(soundbank)
