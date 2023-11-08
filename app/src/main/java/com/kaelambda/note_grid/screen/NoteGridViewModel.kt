@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.kaelambda.note_grid.audio.MidiFileWriter
-import com.kaelambda.note_grid.audio.MidiSoundController
-import com.kaelambda.note_grid.audio.SoundPoolController
+import com.kaelambda.note_grid.audio.MidiPlaybackController
+import com.kaelambda.note_grid.audio.SoundPoolPlaybackController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -18,8 +18,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class NoteGridViewModel @Inject constructor() : ViewModel() {
-    @Inject lateinit var soundPoolController: SoundPoolController
-    @Inject lateinit var midiController: MidiSoundController
+    @Inject lateinit var soundPoolController: SoundPoolPlaybackController
+    @Inject lateinit var midiController: MidiPlaybackController
     @Inject lateinit var midiFileWriter: MidiFileWriter
     @Inject lateinit var mediaPlayer: MediaPlayer
 
