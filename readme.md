@@ -45,7 +45,5 @@ https://github.com/KyoSherlock/MidiDriver
 MidiDriver relies in turn on Kaoru Shoji's port of javax.sound.midi
 to Android: https://github.com/kshoji/javax.sound.midi-for-Android
 
-Their work made it straightforward to enable MIDI playback using soundfonts.
-That will be critical functionality if I go from this proof-of-concept
-to building a MIDI sequencer, so I'm very thankful for both their
-contributions to open-source software.
+Their work made it straightforward to enable MIDI playback using soundfonts, so I'm
+thankful for both their contributions to open-source software. :)
